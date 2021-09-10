@@ -146,11 +146,16 @@ class BuildBitMap {
     }
 
     private void markDateTime(long timeStamp, int width, int height, Canvas canvas) {
-        final SimpleDateFormat sdfHourMin = new SimpleDateFormat("`yy/MM/dd(EEE) HH:mm", Locale.KOREA);
-        int fontSize = (width>height) ? (width+height)/48 : (width+height)/54;  // date time
-        String dateTime = sdfHourMin.format(timeStamp);
-        int xPos = (width>height) ? width/6+fontSize: width/4+fontSize;
-        int yPos = (width>height) ? height/9: height/10;
+        final SimpleDateFormat sdfDate = new SimpleDateFormat("`yy/MM/dd(EEE)", Locale.KOREA);
+        final SimpleDateFormat sdfHourMin = new SimpleDateFormat("HH:mm", Locale.KOREA);
+        int fontSize = (width>height) ? (width+height)/48 : (width+height)/60;  // date time
+        String dateTime = sdfDate.format(timeStamp);
+        int xPos = (width>height) ? width/10+fontSize: width/6+fontSize;
+        int yPos = (width>height) ? height/10: height/12;
+        drawTextOnCanvas(canvas, dateTime, fontSize, xPos, yPos);
+        yPos += fontSize;
+        dateTime = sdfHourMin.format(timeStamp);
+        fontSize = fontSize * 5 / 6;
         drawTextOnCanvas(canvas, dateTime, fontSize, xPos, yPos);
     }
 
@@ -168,6 +173,8 @@ class BuildBitMap {
         int xPos = width / 2;
         int fontSize = (height + width) / 64;  // gps
         int yPos = height - fontSize/2;
+        if (width < height)
+            yPos -= fontSize;
         yPos = drawTextOnCanvas(canvas, sLatLng, fontSize, xPos, yPos);
         fontSize = fontSize * 14 / 10;  // address
         yPos -= fontSize + fontSize / 6;

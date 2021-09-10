@@ -6,6 +6,10 @@
     <color name="recycleView">#fccffc</color>
     <color name="placeAddress">#3300003F</color>
     <color name="black">#FF000000</color>
+    <color name="darkGray">#464242</color>
+    <color name="placeNameBack">#A2C5B0</color>
+    <color name="placeAddressBack">#B0C2C5</color>
+
     <color name="setBack">#DFDC07</color>
     <color name="infoColor">#FFFFFC3B</color>
     <color name="xorColor">#ccCAD8AA</color>

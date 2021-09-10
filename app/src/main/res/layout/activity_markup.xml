@@ -92,11 +92,11 @@
         />
 
     <ImageView
-        android:id="@+id/pasteInfo"
+        android:id="@+id/add_mark"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginTop="16dp"
-        android:src="@mipmap/paste_text"
+        android:src="@mipmap/add_mark"
         android:contentDescription="@string/photo"
         app:layout_constraintTop_toBottomOf="@id/getLocation"
         app:layout_constraintRight_toRightOf="parent"
@@ -104,15 +104,14 @@
         />
 
     <ImageView
-        android:id="@+id/add_mark"
+        android:id="@+id/pasteInfo"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginTop="16dp"
-        android:src="@mipmap/add_mark"
+        android:src="@mipmap/paste_text"
         android:contentDescription="@string/photo"
-        app:layout_constraintTop_toBottomOf="@id/pasteInfo"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/placeAddress"
+        app:layout_constraintTop_toBottomOf="@id/placeAddress"
+        app:layout_constraintLeft_toLeftOf="parent"
         />
 
     <ImageView

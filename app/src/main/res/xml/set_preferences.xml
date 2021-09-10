@@ -5,7 +5,6 @@
     <PreferenceCategory app:title="@string/messages_header"
         >
 
-
         <ListPreference
             app:defaultValue="123"
             app:entries="@array/radius_values"
