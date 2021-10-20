@@ -37,11 +37,11 @@ class BuildBitMap {
     Context context;
     int cameraOrientation;
 
-    public void init(String latlng, Activity activity, Context context, int cameraOrientation) {
+    public void init(String sLatlng, Activity activity, Context context, int cameraOrientation) {
         this.activity = activity;this.context = context;
         this.cameraOrientation = cameraOrientation;
         this.signatureMap = buildSignatureMap();
-        this.sLatLng = latlng;
+        this.sLatLng = sLatlng;
     }
 
     Photo makeSumNail(Photo photo) {
@@ -155,15 +155,15 @@ class BuildBitMap {
         drawTextOnCanvas(canvas, dateTime, fontSize, xPos, yPos);
         yPos += fontSize;
         dateTime = sdfHourMin.format(timeStamp);
-        fontSize = fontSize * 5 / 6;
+        fontSize = fontSize * 6 / 7;
         drawTextOnCanvas(canvas, dateTime, fontSize, xPos, yPos);
     }
 
     private void markSignature(int width, int height, Canvas canvas) {
         int sigSize = (width + height) / 14;
         Bitmap sigMap = Bitmap.createScaledBitmap(signatureMap, sigSize, sigSize, false);
-        int xPos = width - sigSize - width / 20;
-        int yPos = (width>height) ? height/14: height/16;
+        int xPos = width - sigSize - width / 40;
+        int yPos = (width>height) ? height/16: height/20;
         Paint paint = new Paint(); paint.setAlpha(Integer.parseInt(sharedAlpha));
         canvas.drawBitmap(sigMap, xPos, yPos, paint);
     }

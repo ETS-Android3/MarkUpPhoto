@@ -228,11 +228,11 @@ class Utils {
                 }
             }
             else {
-                longitude = convertDMS2GPS(exifOrg.getAttribute(ExifInterface.TAG_GPS_LONGITUDE),
+                longitude = LatLngConv.DMS2GPS(exifOrg.getAttribute(ExifInterface.TAG_GPS_LONGITUDE),
                         exifOrg.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF));
-                latitude = convertDMS2GPS(exifOrg.getAttribute(ExifInterface.TAG_GPS_LATITUDE),
+                latitude = LatLngConv.DMS2GPS(exifOrg.getAttribute(ExifInterface.TAG_GPS_LATITUDE),
                         exifOrg.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF));
-                altitude = convertALT2GPS(exifOrg.getAttribute(ExifInterface.TAG_GPS_ALTITUDE),
+                altitude = LatLngConv.ALT2GPS(exifOrg.getAttribute(ExifInterface.TAG_GPS_ALTITUDE),
                         exifOrg.getAttribute(ExifInterface.TAG_GPS_ALTITUDE_REF));
             }
 
@@ -240,11 +240,11 @@ class Utils {
             exifNew.setAttribute(ExifInterface.TAG_MODEL, exifOrg.getAttribute(ExifInterface.TAG_MODEL));
             exifNew.setAttribute(ExifInterface.TAG_ORIENTATION, ""+orientation);
 
-            exifNew.setAttribute(ExifInterface.TAG_GPS_LATITUDE, convertGPS2DMS(latitude));
-            exifNew.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, latitudeGPS2DMS(latitude));
-            exifNew.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, convertGPS2DMS(longitude));
-            exifNew.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, longitudeGPS2DMS(longitude));
-            exifNew.setAttribute(ExifInterface.TAG_GPS_ALTITUDE, convertALT2DMS(altitude));
+            exifNew.setAttribute(ExifInterface.TAG_GPS_LATITUDE, LatLngConv.GPS2DMS(latitude));
+            exifNew.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, latitude < 0.0d ? "S" : "N");
+            exifNew.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, LatLngConv.GPS2DMS(longitude));
+            exifNew.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, longitude < 0.0d ? "W" : "E");
+            exifNew.setAttribute(ExifInterface.TAG_GPS_ALTITUDE, ""+((altitude > 0) ? altitude:-altitude));
             exifNew.setAttribute(ExifInterface.TAG_GPS_ALTITUDE_REF, (altitude> 0)? "0":"1");
 
             String dateTime = exifOrg.getAttribute(ExifInterface.TAG_DATETIME);
@@ -269,60 +269,6 @@ class Utils {
         }
     }
 
-
-    double convertDMS2GPS(String dmsString, String NEWS) {
-        if (dmsString != null) {
-            String[] dms = dmsString.split(",");
-            if (dms.length == 3) {
-                double degree = Double.parseDouble(dms[0].substring(0, dms[0].length() - 2));
-                double min = Double.parseDouble(dms[1].substring(0, dms[1].length() - 2));
-                double sec = Double.parseDouble(dms[2].substring(0, dms[2].indexOf("/")));
-                double secDiv = Double.parseDouble(dms[2].substring(dms[2].indexOf("/") + 1));
-                sec /= secDiv;
-                double result = degree + min / 60f + sec / 3600f;
-                if (NEWS.equals("S") || NEWS.equals("W"))
-                    result *= -1;
-                return result;
-            } else
-                return 0;
-        }
-        else
-            return 0;
-    }
-
-    double convertALT2GPS(String altString, String UpDown) {
-        if (altString != null) {
-            double val = Double.parseDouble(altString.substring(0, altString.indexOf("/"))) /
-                    Double.parseDouble(altString.substring(altString.indexOf("/")+1));
-            return (UpDown == null || UpDown.equals("0")) ? val: -val;
-        }
-        else
-            return 0;
-    }
-
-    String latitudeGPS2DMS(double latitude) {
-        return latitude < 0.0d ? "S" : "N";
-    }
-
-    String longitudeGPS2DMS(double longitude) {
-        return longitude < 0.0d ? "W" : "E";
-    }
-
-    String convertGPS2DMS(double latitude) {
-        latitude = Math.abs(latitude);
-        int degree = (int) latitude;
-        latitude *= 60;
-        latitude -= (degree * 60.0d);
-        int minute = (int) latitude;
-        latitude *= 60;
-        latitude -= (minute * 60.0d);
-        int second = (int) (latitude * 10000.d);
-        return degree + "/1," + minute + "/1," + second + "/10000";
-    }
-
-    String convertALT2DMS(double altitude) {
-        return ""+((altitude > 0) ? altitude:-altitude);
-    }
 
     void deleteOldLogFiles() {
 

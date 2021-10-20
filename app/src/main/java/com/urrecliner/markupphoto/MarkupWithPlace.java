@@ -1,6 +1,5 @@
 package com.urrecliner.markupphoto;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,7 +15,6 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import androidx.annotation.Nullable;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.urrecliner.markupphoto.placeNearby.PlaceRetrieve;
 
 import androidx.exifinterface.media.ExifInterface;
@@ -52,7 +50,6 @@ import static com.urrecliner.markupphoto.Vars.databaseIO;
 import static com.urrecliner.markupphoto.Vars.longFolder;
 import static com.urrecliner.markupphoto.Vars.mContext;
 import static com.urrecliner.markupphoto.Vars.mActivity;
-import static com.urrecliner.markupphoto.Vars.markUpOnePhoto;
 import static com.urrecliner.markupphoto.Vars.nowDownLoading;
 import static com.urrecliner.markupphoto.Vars.nowPlace;
 import static com.urrecliner.markupphoto.Vars.nowPos;
@@ -81,6 +78,7 @@ public class MarkupWithPlace extends AppCompatActivity {
     String dateTimeColon, dateTimeFileName = null;
     String maker, model;
     double latitude, longitude, altitude;
+
     File fileFullName;
     int orientation;
     Photo photo;
@@ -122,7 +120,7 @@ public class MarkupWithPlace extends AppCompatActivity {
         fileFullName = photo.getFullFileName();
         if (!fileFullName.exists())
             return;
-        ImageView iv = findViewById(R.id.image);
+        photoImage = findViewById(R.id.image);
         bitmap = BitmapFactory.decodeFile(fileFullName.getAbsolutePath());
         getPhotoExif(fileFullName);
         photo.setOrientation(orientation);
@@ -134,9 +132,9 @@ public class MarkupWithPlace extends AppCompatActivity {
                 orientation = 1;
             }
         }
-        iv.setImageBitmap(bitmap);
+        photoImage.setImageBitmap(bitmap);
         PhotoViewAttacher pA;       // to enable zoom
-        pA = new PhotoViewAttacher(iv);
+        pA = new PhotoViewAttacher(photoImage);
         pA.update();
         getLocationInfo();
         TextView tv = findViewById(R.id.photoName);
@@ -180,8 +178,6 @@ public class MarkupWithPlace extends AppCompatActivity {
             }
         });
         iVMark.setAlpha(fileFullName.getName().endsWith("_ha.jpg") ? 0.2f: 1f);
-
-        photoImage = findViewById(R.id.image);
 
         ImageView iVPaste = findViewById(R.id.pasteInfo);
         iVPaste.setOnClickListener(view -> {
@@ -285,7 +281,8 @@ public class MarkupWithPlace extends AppCompatActivity {
     private void getLocationInfo() {
         Geocoder geocoder = new Geocoder(this, Locale.KOREA);
         strPlace = "";
-        nowLatLng = String.format(Locale.ENGLISH, "%.5f ; %.5f ; %.1f", latitude, longitude, altitude);
+//        nowLatLng = String.format(Locale.ENGLISH, "%.5f ; %.5f ; %.1f", latitude, longitude, altitude);
+        nowLatLng = LatLngConv.latLng2String(latitude, longitude, altitude);
         strAddress = GPS2Address.get(geocoder, latitude, longitude);
         EditText et = findViewById(R.id.placeAddress);
         String text = "\n"+strAddress;
@@ -347,11 +344,11 @@ public class MarkupWithPlace extends AppCompatActivity {
         maker = exif.getAttribute(ExifInterface.TAG_MAKE);
         model = exif.getAttribute(ExifInterface.TAG_MODEL);
         orientation = Integer.parseInt(exif.getAttribute(ExifInterface.TAG_ORIENTATION));
-        longitude = utils.convertDMS2GPS(exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE),
+        longitude = LatLngConv.DMS2GPS(exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE),
                 exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF));
-        latitude = utils.convertDMS2GPS(exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE),
+        latitude = LatLngConv.DMS2GPS(exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE),
                             exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF));
-        altitude = utils.convertALT2GPS(exif.getAttribute(ExifInterface.TAG_GPS_ALTITUDE),
+        altitude = LatLngConv.ALT2GPS(exif.getAttribute(ExifInterface.TAG_GPS_ALTITUDE),
                             exif.getAttribute(ExifInterface.TAG_GPS_ALTITUDE_REF));
         dateTimeColon = exif.getAttribute(ExifInterface.TAG_DATETIME);
         photoDate = new Date(fileFullName.lastModified());

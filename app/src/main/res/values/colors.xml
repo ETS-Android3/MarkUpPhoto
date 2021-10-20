@@ -7,8 +7,8 @@
     <color name="placeAddress">#3300003F</color>
     <color name="black">#FF000000</color>
     <color name="darkGray">#464242</color>
-    <color name="placeNameBack">#A2C5B0</color>
-    <color name="placeAddressBack">#B0C2C5</color>
+    <color name="placeNameBack">#80B0C2C5</color>
+    <color name="placeAddressBack">#80C0D2D5</color>
 
     <color name="setBack">#DFDC07</color>
     <color name="infoColor">#FFFFFC3B</color>
