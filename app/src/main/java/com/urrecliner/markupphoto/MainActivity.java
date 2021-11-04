@@ -1,34 +1,55 @@
 package com.urrecliner.markupphoto;
 
+import static com.urrecliner.markupphoto.Vars.buildBitMap;
+import static com.urrecliner.markupphoto.Vars.buildDB;
+import static com.urrecliner.markupphoto.Vars.databaseIO;
+import static com.urrecliner.markupphoto.Vars.dirNotReady;
+import static com.urrecliner.markupphoto.Vars.longFolder;
+import static com.urrecliner.markupphoto.Vars.mActivity;
+import static com.urrecliner.markupphoto.Vars.mContext;
+import static com.urrecliner.markupphoto.Vars.mainMenu;
+import static com.urrecliner.markupphoto.Vars.makeDirFolder;
+import static com.urrecliner.markupphoto.Vars.markTextInColor;
+import static com.urrecliner.markupphoto.Vars.markTextOutColor;
+import static com.urrecliner.markupphoto.Vars.markUpOnePhoto;
+import static com.urrecliner.markupphoto.Vars.multiMode;
+import static com.urrecliner.markupphoto.Vars.photoAdapter;
+import static com.urrecliner.markupphoto.Vars.photoView;
+import static com.urrecliner.markupphoto.Vars.photos;
+import static com.urrecliner.markupphoto.Vars.sharedPref;
+import static com.urrecliner.markupphoto.Vars.sharedSpan;
+import static com.urrecliner.markupphoto.Vars.shortFolder;
+import static com.urrecliner.markupphoto.Vars.signatureMap;
+import static com.urrecliner.markupphoto.Vars.sizeX;
+import static com.urrecliner.markupphoto.Vars.spanWidth;
+import static com.urrecliner.markupphoto.Vars.squeezeDB;
+import static com.urrecliner.markupphoto.Vars.utils;
+
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-
 import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -37,35 +58,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import uk.co.senab.photoview.PhotoViewAttacher;
-
-import static com.urrecliner.markupphoto.Vars.buildBitMap;
-import static com.urrecliner.markupphoto.Vars.buildDB;
-import static com.urrecliner.markupphoto.Vars.databaseIO;
-import static com.urrecliner.markupphoto.Vars.dirNotReady;
-import static com.urrecliner.markupphoto.Vars.longFolder;
-import static com.urrecliner.markupphoto.Vars.mContext;
-import static com.urrecliner.markupphoto.Vars.mActivity;
-import static com.urrecliner.markupphoto.Vars.mainMenu;
-import static com.urrecliner.markupphoto.Vars.makeDirFolder;
-import static com.urrecliner.markupphoto.Vars.markTextInColor;
-import static com.urrecliner.markupphoto.Vars.markTextOutColor;
-import static com.urrecliner.markupphoto.Vars.markUpOnePhoto;
-import static com.urrecliner.markupphoto.Vars.menuItem;
-import static com.urrecliner.markupphoto.Vars.multiMode;
-import static com.urrecliner.markupphoto.Vars.nowPlace;
-import static com.urrecliner.markupphoto.Vars.photoAdapter;
-import static com.urrecliner.markupphoto.Vars.photoView;
-import static com.urrecliner.markupphoto.Vars.photos;
-import static com.urrecliner.markupphoto.Vars.sharedPref;
-import static com.urrecliner.markupphoto.Vars.shortFolder;
-import static com.urrecliner.markupphoto.Vars.signatureMap;
-import static com.urrecliner.markupphoto.Vars.sizeX;
-import static com.urrecliner.markupphoto.Vars.sharedSpan;
-import static com.urrecliner.markupphoto.Vars.spanWidth;
-import static com.urrecliner.markupphoto.Vars.squeezeDB;
-import static com.urrecliner.markupphoto.Vars.utils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -133,7 +125,6 @@ public class MainActivity extends AppCompatActivity {
             }, 1000);
         }
         utils.deleteOldLogFiles();
-        utils.deleteOldSAVFiles();
         FloatingActionButton fab = findViewById(R.id.undo);
         fab.setVisibility(View.INVISIBLE);
         fab.setOnClickListener(v -> {
@@ -182,40 +173,32 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
-        switch (item.getItemId()) {
-
-            case R.id.action_setting:
-                intent = new Intent(MainActivity.this, SettingsActivity.class);
-                startActivity(intent);
-                return true;
-
-//            case R.id.action_MarkUpMulti:
-//                nowPlace = null;
-//                new MarkUpMulti().markUp();
-//                return true;
-
-            case R.id.action_Directory:
-                finish();
-                intent = new Intent(this, DirectoryActivity.class);
-                startActivity(intent);
-                return true;
-
-            case R.id.action_Delete:
-                final ArrayList<String> toDeleteList;
-                toDeleteList = build_DeletePhoto();
-                if (toDeleteList.size()> 0) {
-                    StringBuilder msg = new StringBuilder();
-                    for (String s : toDeleteList) msg.append("\n").append(s);
-                    AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-                    builder.setTitle("Delete multiple photos ?");
-                    builder.setMessage(msg.toString());
-                    builder.setPositiveButton("Yes", (dialog, which) -> DeleteMulti.run());
-                    builder.setNegativeButton("No", (dialog, which) -> { });
-                    showPopup(builder);
-                } else {
-                    Toast.makeText(mContext,"Photo selection is required to delete",Toast.LENGTH_LONG).show();
-                }
-                break;
+        if (item.getItemId() == R.id.action_setting) {
+            intent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        else if (item.getItemId() == R.id.action_Directory) {
+            finish();
+            intent = new Intent(this, DirectoryActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        else if (item.getItemId() == R.id.action_Delete) {
+            final ArrayList<String> toDeleteList;
+            toDeleteList = build_DeletePhoto();
+            if (toDeleteList.size()> 0) {
+                StringBuilder msg = new StringBuilder();
+                for (String s : toDeleteList) msg.append("\n").append(s);
+                AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+                builder.setTitle("Delete multiple photos ?");
+                builder.setMessage(msg.toString());
+                builder.setPositiveButton("Yes", (dialog, which) -> DeleteMulti.run());
+                builder.setNegativeButton("No", (dialog, which) -> { });
+                showPopup(builder);
+            } else {
+                Toast.makeText(mContext,"Photo selection is required to delete",Toast.LENGTH_LONG).show();
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -297,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == ALL_PERMISSIONS_RESULT) {
             for (Object perms : permissionsToRequest) {

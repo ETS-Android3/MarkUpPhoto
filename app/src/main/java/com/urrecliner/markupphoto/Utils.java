@@ -212,7 +212,7 @@ class Utils {
 
     static final private SimpleDateFormat sdfHourMinSec = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.ENGLISH);
 
-    private void copyExif(File fileOrg, File fileNew, int orientation) {
+    void copyExif(File fileOrg, File fileNew, int orientation) {
         ExifInterface exifOrg, exifNew;
         double latitude = 0, longitude = 0, altitude = 0;
         try {
@@ -285,21 +285,6 @@ class Utils {
                         Log.e("file", "Delete Error " + file);
                 }
             }
-        }
-    }
-
-    void deleteOldSAVFiles() {
-
-        long oldDate = System.currentTimeMillis() - 5*24*60*60*1000L;        // 5 days before
-        File[] files = new File(longFolder).listFiles((dir, name) -> name.endsWith("sav"));
-        if (files == null)
-            return;
-        for (File file : files) {
-            long lastModDate = new Date(file.lastModified()).getTime();
-            if (lastModDate < oldDate && file.delete())
-                utils.log("delete old SAV",file.getName());
-            else
-                    Log.e("file", "Delete " + file);
         }
     }
 

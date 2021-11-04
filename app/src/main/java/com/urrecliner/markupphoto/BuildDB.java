@@ -1,12 +1,5 @@
 package com.urrecliner.markupphoto;
 
-import android.graphics.Color;
-import android.os.AsyncTask;
-import com.google.android.material.snackbar.Snackbar;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import static com.urrecliner.markupphoto.Vars.buildBitMap;
 import static com.urrecliner.markupphoto.Vars.buildDB;
 import static com.urrecliner.markupphoto.Vars.databaseIO;
@@ -15,11 +8,18 @@ import static com.urrecliner.markupphoto.Vars.photoView;
 import static com.urrecliner.markupphoto.Vars.photos;
 import static com.urrecliner.markupphoto.Vars.squeezeDB;
 
+import android.graphics.Color;
+import android.os.AsyncTask;
+import android.view.View;
+import android.widget.Toast;
+
+import com.google.android.material.snackbar.Snackbar;
+
 
 class BuildDB {
 
     private static boolean isCanceled = false;
-    private static Snackbar snackbar = null;
+    private static Snackbar snackBar = null;
     private static View mainLayout;
 
     void fillUp(View view) {
@@ -35,16 +35,15 @@ class BuildDB {
 
     void cancel() {
         isCanceled = true;
-        if (snackbar != null) {
-            snackbar.dismiss();
-            snackbar = null;
+        if (snackBar != null) {
+            snackBar.dismiss();
+            snackBar = null;
         }
     }
 
     static class buildSumNailDB extends AsyncTask<String, String, String> {
 
         int count, totCount;
-        TextView tvSnack;
 
         @Override
         protected void onPreExecute() {
@@ -52,25 +51,13 @@ class BuildDB {
             totCount = photos.size();
             photoView.setBackgroundColor(Color.CYAN);
             String s = "Building SumNails for "+totCount+" photos";
-            snackbar = Snackbar.make(mainLayout, s, Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction("Hide", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    snackbar.dismiss();
-                    snackbar = null;
-                    Toast.makeText(mContext, "Status Bar hidden", Toast.LENGTH_LONG).show();
-                }
+            snackBar = Snackbar.make(mainLayout, s, Snackbar.LENGTH_INDEFINITE);
+            snackBar.setAction("Hide", v -> {
+                snackBar.dismiss();
+                snackBar = null;
+                Toast.makeText(mContext, "Status Bar hidden", Toast.LENGTH_LONG).show();
             });
-//            TextView stvAction = snackbar.getView().findViewById( android.support.v4.design.R.id.snackbar_action);
-//            stvAction.setTextSize(12);
-//            stvAction.setTransformationMethod(null);
-//            stvAction.setTypeface(stvAction.getTypeface(), Typeface.BOLD);
-//
-//            tvSnack =  snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
-//            tvSnack.setTextSize(16);
-//            tvSnack.setMaxLines(3);
-//            tvSnack.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
-            snackbar.show();
+            snackBar.show();
         }
 
         final String SAY_COUNT = "sc";
@@ -96,19 +83,11 @@ class BuildDB {
         }
 
         @Override
-        protected void onProgressUpdate(String... values) {
-            if (snackbar != null) {
-                String s = " "+count+" in "+totCount+" photos";
-//                tvSnack.setText(s);
-            }
-        }
-
-        @Override
         protected void onPostExecute(String doI) {
 
-            if (snackbar != null) {
-                snackbar.dismiss();
-                snackbar = null;
+            if (snackBar != null) {
+                snackBar.dismiss();
+                snackBar = null;
             }
             photoView.setBackgroundColor(Color.WHITE);
             squeezeDB.run();
@@ -125,4 +104,3 @@ class BuildDB {
         return photo;
     }
 }
-

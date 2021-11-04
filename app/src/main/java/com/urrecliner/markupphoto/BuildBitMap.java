@@ -48,8 +48,15 @@ class BuildBitMap {
         ExifInterface exif;
         String fullFileName = photo.getFullFileName().toString();
         boolean landscape;
-
-        Bitmap bitmap = BitmapFactory.decodeFile(fullFileName).copy(Bitmap.Config.RGB_565, false);
+        Bitmap bitmap = null;
+        String Orientation = null;
+        try {
+            bitmap = BitmapFactory.decodeFile(fullFileName).copy(Bitmap.Config.RGB_565, false);
+        } catch (Exception e) {
+            Toast.makeText(mContext,fullFileName.toString()+" file error", Toast.LENGTH_LONG).show();
+            bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.signature).copy(Bitmap.Config.RGB_565, false);
+        }
+        assert bitmap != null;
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
         try {
@@ -58,7 +65,11 @@ class BuildBitMap {
             Toast.makeText(mContext,"No photo information on\n"+photo.getShortName(), Toast.LENGTH_LONG).show();
             return photo;
         }
-        String Orientation = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
+        try {
+            Orientation = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
+        } catch (Exception e) {
+            Orientation = "1";
+        }
         int orientation = Integer.parseInt(Orientation);
         if (orientation == 0)
             orientation = 1;

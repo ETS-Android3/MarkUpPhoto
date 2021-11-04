@@ -50,7 +50,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
                 @Override
                 public void onClick(View view) {
                     if (multiMode)
-                        toggleCheckBox(getAdapterPosition());
+                        toggleCheckBox(getBindingAdapterPosition());
                     else
                         loadMarkUpActivity();
                 }
@@ -61,7 +61,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
                 @Override
                 public void onClick(View view) {
                     if (multiMode)
-                        toggleCheckBox(getAdapterPosition());
+                        toggleCheckBox(getAbsoluteAdapterPosition());
                     else
                         loadMarkUpActivity();
                 }
@@ -88,7 +88,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
         }
 
         private void loadMarkUpActivity() {
-            nowPos = getAdapterPosition();
+            nowPos = getAbsoluteAdapterPosition();
             Photo photo = photos.get(nowPos);
             Bitmap photoMap = photo.getBitmap().copy(Bitmap.Config.ARGB_8888, false);
             boolean checked = !photo.isChecked();

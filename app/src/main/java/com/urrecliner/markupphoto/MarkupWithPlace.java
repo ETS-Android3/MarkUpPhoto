@@ -1,59 +1,17 @@
 package com.urrecliner.markupphoto;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.location.Geocoder;
-import android.media.MediaScannerConnection;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.SystemClock;
-import androidx.annotation.Nullable;
-
-import com.urrecliner.markupphoto.placeNearby.PlaceRetrieve;
-
-import androidx.exifinterface.media.ExifInterface;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import uk.co.senab.photoview.PhotoViewAttacher;
-
 import static com.urrecliner.markupphoto.Vars.buildDB;
 import static com.urrecliner.markupphoto.Vars.byPlaceName;
 import static com.urrecliner.markupphoto.Vars.copyPasteGPS;
 import static com.urrecliner.markupphoto.Vars.copyPasteText;
 import static com.urrecliner.markupphoto.Vars.databaseIO;
 import static com.urrecliner.markupphoto.Vars.longFolder;
-import static com.urrecliner.markupphoto.Vars.mContext;
 import static com.urrecliner.markupphoto.Vars.mActivity;
+import static com.urrecliner.markupphoto.Vars.mContext;
 import static com.urrecliner.markupphoto.Vars.nowDownLoading;
+import static com.urrecliner.markupphoto.Vars.nowLatLng;
 import static com.urrecliner.markupphoto.Vars.nowPlace;
 import static com.urrecliner.markupphoto.Vars.nowPos;
-import static com.urrecliner.markupphoto.Vars.nowLatLng;
 import static com.urrecliner.markupphoto.Vars.photoAdapter;
 import static com.urrecliner.markupphoto.Vars.photoView;
 import static com.urrecliner.markupphoto.Vars.photos;
@@ -70,6 +28,47 @@ import static com.urrecliner.markupphoto.Vars.typeNames;
 import static com.urrecliner.markupphoto.Vars.typeNumber;
 import static com.urrecliner.markupphoto.Vars.utils;
 import static com.urrecliner.markupphoto.placeNearby.PlaceParser.pageToken;
+
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.location.Geocoder;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.SystemClock;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.exifinterface.media.ExifInterface;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.urrecliner.markupphoto.placeNearby.PlaceRetrieve;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class MarkupWithPlace extends AppCompatActivity {
 
@@ -152,29 +151,27 @@ public class MarkupWithPlace extends AppCompatActivity {
 
         ImageView iVMark = findViewById(R.id.add_mark);
         iVMark.setOnClickListener(view -> {
-            if (latitude == 0 && longitude == 0) {
+            if (latitude == 0 && longitude == 0)
                 Toast.makeText(mContext,"No GPS Information to retrieve places",Toast.LENGTH_LONG).show();
-            } else {
-                EditText etPlace = findViewById(R.id.placeAddress);
-                nowPlace = etPlace.getText().toString();
-                if (nowPlace.length() > 5) {
-                    Photo nPhoto = new Photo(MarkUpOnePhoto.insertGeoInfo(photo));
-                    String nFileName = nPhoto.getFullFileName().toString();
-                    if (photos.get(nowPos-1).getFullFileName().toString().equals(nFileName)) {
-                        removeItemView(nowPos-1);
-                        databaseIO.delete(nPhoto.getFullFileName());
-                        nowPos--;
-                    }
-
-                    nPhoto.setBitmap(null);
-                    nPhoto.setOrientation(photo.getOrientation());
-                    nPhoto = buildDB.getPhotoWithMap(nPhoto);
-                    photos.add(nowPos, nPhoto);
-                    photoAdapter.notifyItemInserted(nowPos);
-                    photoAdapter.notifyItemChanged(nowPos, nPhoto);
-                    photoAdapter.notifyItemChanged(nowPos+1);
-                    finish();
+            EditText etPlace = findViewById(R.id.placeAddress);
+            nowPlace = etPlace.getText().toString();
+            if (nowPlace.length() > 5) {
+                Photo nPhoto = new Photo(MarkUpOnePhoto.insertGeoInfo(photo));
+                String nFileName = nPhoto.getFullFileName().toString();
+                if (photos.get(nowPos-1).getFullFileName().toString().equals(nFileName)) {
+                    removeItemView(nowPos-1);
+                    databaseIO.delete(nPhoto.getFullFileName());
+                    nowPos--;
                 }
+
+                nPhoto.setBitmap(null);
+                nPhoto.setOrientation(photo.getOrientation());
+                nPhoto = buildDB.getPhotoWithMap(nPhoto);
+                photos.add(nowPos, nPhoto);
+                photoAdapter.notifyItemInserted(nowPos);
+                photoAdapter.notifyItemChanged(nowPos, nPhoto);
+                photoAdapter.notifyItemChanged(nowPos+1);
+                finish();
             }
         });
         iVMark.setAlpha(fileFullName.getName().endsWith("_ha.jpg") ? 0.2f: 1f);
@@ -239,7 +236,6 @@ public class MarkupWithPlace extends AppCompatActivity {
         }
         else
             ivRight.setVisibility(View.INVISIBLE);
-        utils.deleteOldSAVFiles();
         if (sharedAutoLoad && !photo.getShortName().endsWith("_ha.jpg")) {
             getPlaceByLatLng();
         }
@@ -262,19 +258,18 @@ public class MarkupWithPlace extends AppCompatActivity {
     private void save_rotatedPhoto() {
         File orgFileName, tgtFileName;
         orgFileName = photo.getFullFileName();
-        tgtFileName = new File (orgFileName.toString().replace(photo.getShortName(),""), dateTimeFileName +".jpg.sav");
-        tgtFileName.delete();
-        orgFileName.renameTo(tgtFileName);
-        databaseIO.delete(orgFileName);
-        String outName = orgFileName.toString();
         orientation = 1; // (bitmap.getWidth() > bitmap.getHeight()) ? 1:6;
+        tgtFileName = new File (orgFileName.getParentFile(), orgFileName.getName().substring(0,orgFileName.getName().length()-4)+"R.jpg");
+//        databaseIO.delete(orgFileName);
+        String outName = tgtFileName.toString();
         utils.makeBitmapFile(orgFileName, outName, bitmap, orientation);
-        mActivity.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(orgFileName)));
+        mActivity.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(tgtFileName)));
         photo.setOrientation(orientation);
         photo.setChecked(false);
+        photo.setFullFileName(tgtFileName);
         photo.setBitmap(null);
-        photos.set(nowPos, photo);
-        photoAdapter.notifyItemChanged(nowPos, photo);
+        photos.add(nowPos, photo);
+        photoAdapter.notifyItemInserted(nowPos);
         finish();
     }
 
@@ -312,26 +307,6 @@ public class MarkupWithPlace extends AppCompatActivity {
         }, 1500);
     }
 
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if ((requestCode == REQUEST_PLACE_PICKER) && (resultCode == RESULT_OK)) {
-//            NearByPlacePicker.Companion companion = NearByPlacePicker.Companion;
-//            com.google.android.libraries.places.api.model.Place place = companion.getPlace(data);
-//            if (place != null) {
-//                strPlace = place.getName();
-//                String text = place.getAddress();
-//                if (text.length() > 5)
-//                    strAddress = text.replace("대한민국 ", "");
-//                EditText et = findViewById(R.id.placeAddress);
-//                text = strPlace + "\n\n" + strAddress;
-//                et.setText(text);
-//                et.setSelection(text.indexOf("\n") + 1);
-//                latitude = place.getLatLng().latitude;
-//                longitude = place.getLatLng().longitude;
-//            }
-//        }
-//    }
 
     private void getPhotoExif(File fileFullName) {
         Date photoDate;
@@ -371,24 +346,6 @@ public class MarkupWithPlace extends AppCompatActivity {
                 "\nSize: "+bitmap.getWidth()+" x "+bitmap.getHeight();
     }
 
-//    @Override
-//    protected void oxnActivityResult(int requestCode, int resultCode, Intent data) {
-//
-//        utils.log("A","requestCode="+requestCode+" result="+resultCode);
-//        if (resultCode == RESULT_OK) {  // user picked up place within the google map list
-//            Place place = PlacePicker.getPlace(this, data);
-//            strPlace = place.getName().toString();
-//            String text = place.getAddress().toString();
-//            if (text.length() > 5)
-//                strAddress = text.replace("대한민국 ", "");
-//            EditText et = findViewById(R.id.placeAddress);
-//            text = strPlace + "\n\n" + strAddress;
-//            et.setText(text);
-//            et.setSelection(text.indexOf("\n") + 1);
-//        }
-//        super.onActivityResult(requestCode, resultCode, data);
-//    }
-
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         return true;
@@ -397,11 +354,6 @@ public class MarkupWithPlace extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.photo_menu, menu);
-//        menuPlace = menu;
-//        MenuItem item;
-//        item = menu.findItem(R.id.saveRotate);
-//        item.setEnabled(false);
-//        item.getIcon().setAlpha(40);
         return true;
     }
 
@@ -412,42 +364,38 @@ public class MarkupWithPlace extends AppCompatActivity {
         Photo photo = photos.get(nowPos);
         File orgFileName, tgtFileName;
 
-        switch (item.getItemId()) {
-
-            case R.id.copyText:
-                copyPasteText = etPlace.getText().toString();
-                copyPasteGPS = latitude+";"+longitude+";"+altitude;
-                Toast.makeText(mContext, "Text Copied\n"+copyPasteText,Toast.LENGTH_SHORT).show();
-                ImageView iv = findViewById(R.id.pasteInfo);
-                iv.setAlpha(1f);
-                iv.setEnabled(true);
-//                MenuItem itemP = menuPlace.findItem(R.id.pasteText);
-//                itemP.setTitle("Paste <"+copyPasteText+">");
-                return true;
-
-            case R.id.markDelete:
-                nowPlace = null;
-                deleteOnConfirm(nowPos);
-                finish();
-                return true;
-
-            case R.id.renameClock:
-                photo.setChecked(false);
-                orgFileName = photo.getFullFileName();
-                String newName = orgFileName.toString().replace(photo.getShortName(),"");
-                int C = 67; // 'C'
-                do {
-                    tgtFileName = new File(newName, dateTimeFileName + (char)C + ".jpg");
-                    if (!tgtFileName.exists())
-                        break;
-                    C++;
-                } while (C < 84);
-                orgFileName.renameTo(tgtFileName);
-                photo.setFullFileName(tgtFileName);
-                photos.set(nowPos, photo);
-                photoAdapter.notifyItemChanged(nowPos, photo);
-                finish();
-                return true;
+        if (item.getItemId() == R.id.copyText) {
+            copyPasteText = etPlace.getText().toString();
+            copyPasteGPS = latitude + ";" + longitude + ";" + altitude;
+            Toast.makeText(mContext, "Text Copied\n" + copyPasteText, Toast.LENGTH_SHORT).show();
+            ImageView iv = findViewById(R.id.pasteInfo);
+            iv.setAlpha(1f);
+            iv.setEnabled(true);
+            return true;
+        }
+        else if (item.getItemId() == R.id.markDelete) {
+            nowPlace = null;
+            deleteOnConfirm(nowPos);
+            finish();
+            return true;
+        }
+        else if (item.getItemId() == R.id.renameClock) {
+            photo.setChecked(false);
+            orgFileName = photo.getFullFileName();
+            String newName = orgFileName.toString().replace(photo.getShortName(),"");
+            int C = 67; // 'C'
+            do {
+                tgtFileName = new File(newName, dateTimeFileName + (char)C + ".jpg");
+                if (!tgtFileName.exists())
+                    break;
+                C++;
+            } while (C < 84);
+            orgFileName.renameTo(tgtFileName);
+            photo.setFullFileName(tgtFileName);
+            photos.set(nowPos, photo);
+            photoAdapter.notifyItemChanged(nowPos, photo);
+            finish();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
