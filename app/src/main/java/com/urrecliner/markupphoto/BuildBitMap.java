@@ -92,7 +92,7 @@ class BuildBitMap {
         int sHeight;
 
         if (landscape) {
-            sHeight = height * 11 / 16;
+            sHeight = height * 14 / 16;
             sWidth = sHeight * 19 / 11;
             if (sWidth > width) {
                 utils.logE("width",width+">" + sWidth+", "+height+">"+sHeight+", land=T, "+fullFileName);
@@ -100,8 +100,8 @@ class BuildBitMap {
             }
         }
         else {
-            sWidth = width * 7 / 8;
-            sHeight = sWidth * 9 / 6;
+            sWidth = width * 7 / 9;
+            sHeight = sWidth * 8 / 6;
             if (sHeight > height) {
                 utils.logE("height",width+">" + sWidth+", "+height+">"+sHeight+" land=F"+fullFileName);
                 sHeight = height * 5 / 8;
@@ -159,19 +159,19 @@ class BuildBitMap {
     private void markDateTime(long timeStamp, int width, int height, Canvas canvas) {
         final SimpleDateFormat sdfDate = new SimpleDateFormat("`yy/MM/dd(EEE)", Locale.KOREA);
         final SimpleDateFormat sdfHourMin = new SimpleDateFormat("HH:mm", Locale.KOREA);
-        int fontSize = (width>height) ? (width+height)/48 : (width+height)/60;  // date time
+        int fontSize = (width>height) ? (width+height)/60 : (width+height)/80;  // date time
         String dateTime = sdfDate.format(timeStamp);
-        int xPos = (width>height) ? width/10+fontSize: width/6+fontSize;
+        int xPos = (width>height) ? width/10+fontSize: width/7+fontSize;
         int yPos = (width>height) ? height/10: height/12;
         drawTextOnCanvas(canvas, dateTime, fontSize, xPos, yPos);
         yPos += fontSize;
         dateTime = sdfHourMin.format(timeStamp);
-        fontSize = fontSize * 6 / 7;
+        fontSize = fontSize * 7 / 8;
         drawTextOnCanvas(canvas, dateTime, fontSize, xPos, yPos);
     }
 
     private void markSignature(int width, int height, Canvas canvas) {
-        int sigSize = (width + height) / 14;
+        int sigSize = (width + height) / 18;
         Bitmap sigMap = Bitmap.createScaledBitmap(signatureMap, sigSize, sigSize, false);
         int xPos = width - sigSize - width / 40;
         int yPos = (width>height) ? height/16: height/20;
@@ -182,18 +182,16 @@ class BuildBitMap {
     private void markFoodPlaceAddress(int width, int height, Canvas canvas) {
 
         int xPos = width / 2;
-        int fontSize = (height + width) / 64;  // gps
-        int yPos = height - fontSize/2;
-        if (width < height)
-            yPos -= fontSize;
+        int fontSize = (width>height) ? (height + width) / 70: (height + width) / 100;  // gps
+        int yPos = (width>height) ? height - fontSize: height - fontSize*4;
         yPos = drawTextOnCanvas(canvas, sLatLng, fontSize, xPos, yPos);
-        fontSize = fontSize * 14 / 10;  // address
-        yPos -= fontSize + fontSize / 6;
+        fontSize = fontSize * 12 / 10;  // address
+        yPos -= fontSize + fontSize / 3;
         yPos = drawTextOnCanvas(canvas, sAddress, fontSize, xPos, yPos);
-        fontSize = fontSize * 14 / 10;  // Place
-        yPos -= fontSize + fontSize / 4;
+        fontSize = fontSize * 12 / 10;  // Place
+        yPos -= fontSize + fontSize / 3;
         yPos = drawTextOnCanvas(canvas, sPlace, fontSize, xPos, yPos);
-        yPos -= fontSize + fontSize / 4; // food
+        yPos -= fontSize + fontSize / 3; // food
         drawTextOnCanvas(canvas, sFood, fontSize, xPos, yPos);
     }
 
@@ -202,13 +200,13 @@ class BuildBitMap {
         paint.setTextSize(fontSize);
         paint.setTypeface(Typeface.DEFAULT_BOLD);
         paint.setTextAlign(Paint.Align.CENTER);
-        int cWidth = canvas.getWidth() * 3 / 4;
+        int cWidth = canvas.getWidth() * 2 / 3;
         float tWidth = paint.measureText(text);
         int pos;
         if (tWidth > cWidth) {
             int length = text.length() / 2;
             for (pos = length; pos < text.length(); pos++)
-                if (text.substring(pos,pos+1).equals(" "))
+                if (text.charAt(pos) == ' ')
                     break;
             String text1 = text.substring(pos);
             drawOutLinedText(canvas, text1, xPos, yPos, fontSize);

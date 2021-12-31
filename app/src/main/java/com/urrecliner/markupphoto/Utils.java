@@ -16,8 +16,11 @@ import android.os.Environment;
 import androidx.exifinterface.media.ExifInterface;
 import androidx.appcompat.app.ActionBar;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.io.BufferedWriter;
@@ -32,11 +35,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.urrecliner.markupphoto.Vars.copyPasteGPS;
 import static com.urrecliner.markupphoto.Vars.longFolder;
 import static com.urrecliner.markupphoto.Vars.mContext;
 import static com.urrecliner.markupphoto.Vars.mActivity;
+import static com.urrecliner.markupphoto.Vars.mainMenu;
 import static com.urrecliner.markupphoto.Vars.sharedAlpha;
 import static com.urrecliner.markupphoto.Vars.sharedAutoLoad;
 import static com.urrecliner.markupphoto.Vars.sharedPref;
@@ -254,15 +260,18 @@ class Utils {
             exifNew.setAttribute(ExifInterface.TAG_DATETIME, dateTime);
             exifNew.setAttribute(ExifInterface.TAG_IMAGE_DESCRIPTION, "by riopapa");
             exifNew.saveAttributes();
-            Date photoDate;
-            try {
-                photoDate = sdfHourMinSec.parse(dateTime);
-            }
-            catch (Exception e){
-                photoDate = new Date(fileOrg.lastModified());
-            }
-            if (fileNew.setLastModified(photoDate.getTime()))
-                Log.w("fileHa","Deleted");
+            String finalDateTime = dateTime;
+            new Timer().schedule(new TimerTask() {
+                public void run() {
+                    try {
+                        Date photoDate = sdfHourMinSec.parse(finalDateTime);
+                        fileNew.setLastModified(photoDate.getTime());
+                    }
+                    catch (Exception e){
+//                        photoDate = new Date(fileOrg.lastModified());
+                    }
+                }
+            }, 500);
         } catch (IOException e) {
             utils.log("1",e.toString());
             e.printStackTrace();

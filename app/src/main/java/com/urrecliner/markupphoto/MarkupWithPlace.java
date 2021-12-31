@@ -242,17 +242,13 @@ public class MarkupWithPlace extends AppCompatActivity {
     }
 
     private Bitmap maskImage(Bitmap mainImage, boolean isRight) {
-        Bitmap mask = BitmapFactory.decodeResource(getResources(),(isRight) ? R.mipmap.move_right: R.mipmap.move_left);
-        Bitmap result = Bitmap.createScaledBitmap(mainImage, mask.getWidth(), mask.getHeight(), false);
-        Canvas c = new Canvas(result);
-        c.drawBitmap(mainImage, 0, 0, null);
+        Bitmap mask = BitmapFactory.decodeResource(getResources(),(isRight) ? R.mipmap.move_right: R.mipmap.move_left).copy(Bitmap.Config.ARGB_8888, true);
+        Bitmap result = Bitmap.createScaledBitmap(mainImage, mask.getWidth()-16, mask.getHeight()-16, false);
+        Canvas c = new Canvas(mask);
         Paint paint = new Paint();
-        paint.setFilterBitmap(false);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN) ); // DST_OUT
-        c.drawBitmap(mask, 0, 0, paint);
-        paint.setXfermode(null);
-        c.drawBitmap(result, 0, 0, null);
-        return result;
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN) );
+        c.drawBitmap(result, 8, 8, paint);
+        return mask;
     }
 
     private void save_rotatedPhoto() {
