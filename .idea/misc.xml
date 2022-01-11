@@ -8,11 +8,15 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/@ANDROID/MarkUpPhoto/app/src/main/res/drawable/scrollbar_big_thumbs.xml" value="0.25104166666666666" />
+        <entry key="..\:/@ANDROID/MarkUpPhoto/app/src/main/res/drawable/scrollbar_vertical_thumb.xml" value="0.25104166666666666" />
+        <entry key="..\:/@ANDROID/MarkUpPhoto/app/src/main/res/drawable/scrollbar_vertical_track.xml" value="0.25104166666666666" />
         <entry key="..\:/@ANDROID/MarkUpPhoto/app/src/main/res/layout/activity_directory.xml" value="0.13221884498480244" />
         <entry key="..\:/@ANDROID/MarkUpPhoto/app/src/main/res/layout/activity_main.xml" value="0.13221884498480244" />
         <entry key="..\:/@ANDROID/MarkUpPhoto/app/src/main/res/layout/activity_markup.xml" value="0.12639311043566362" />
         <entry key="..\:/@ANDROID/MarkUpPhoto/app/src/main/res/layout/activity_placelist.xml" value="0.13221884498480244" />
         <entry key="..\:/@ANDROID/MarkUpPhoto/app/src/main/res/layout/activity_settings.xml" value="0.13221884498480244" />
+        <entry key="..\:/@ANDROID/MarkUpPhoto/app/src/main/res/layout/photo_item.xml" value="0.22407407407407406" />
         <entry key="..\:/@ANDROID/MarkUpPhoto/app/src/main/res/layout/place_item.xml" value="0.13221884498480244" />
         <entry key="..\:/@ANDROID/MarkUpPhoto/app/src/main/res/layout/type_item.xml" value="0.13221884498480244" />
         <entry key="..\:/@ANDROID/MarkUpPhoto/app/src/main/res/xml/set_preferences.xml" value="0.13221884498480244" />

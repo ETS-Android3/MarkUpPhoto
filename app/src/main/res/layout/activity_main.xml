@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/scrollbar_shape_style"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/border_back"
@@ -13,11 +12,11 @@
         android:id="@+id/photoView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="1dp"
+        android:layout_margin="2dp"
         app:layoutManager="GridLayoutManager"
         app:spanCount="2"
         android:choiceMode="multipleChoice"
-        style="@style/scrollbar_shape_style"
+        style="@style/up_down_scroll_thumb"
         >
     </androidx.recyclerview.widget.RecyclerView>
 

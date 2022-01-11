@@ -27,29 +27,26 @@ import static com.urrecliner.markupphoto.Vars.databaseIO;
 import static com.urrecliner.markupphoto.Vars.mContext;
 import static com.urrecliner.markupphoto.Vars.sharedAlpha;
 import static com.urrecliner.markupphoto.Vars.sizeX;
-import static com.urrecliner.markupphoto.Vars.utils;
 
 class BuildBitMap {
 
-    String sFood, sPlace, sAddress, sLatLng;
+    String sFood, sPlace, sAddress;
     Bitmap signatureMap;
     Activity activity;
     Context context;
     int cameraOrientation;
 
-    public void init(String sLatlng, Activity activity, Context context, int cameraOrientation) {
+    public void init(Activity activity, Context context, int cameraOrientation) {
         this.activity = activity;this.context = context;
         this.cameraOrientation = cameraOrientation;
         this.signatureMap = buildSignatureMap();
-        this.sLatLng = sLatlng;
     }
 
     Photo makeSumNail(Photo photo) {
         ExifInterface exif;
         String fullFileName = photo.getFullFileName().toString();
-        boolean landscape;
         Bitmap bitmap = null;
-        String Orientation = null;
+        String Orientation = "1";
         try {
             bitmap = BitmapFactory.decodeFile(fullFileName).copy(Bitmap.Config.RGB_565, false);
         } catch (Exception e) {
@@ -67,9 +64,7 @@ class BuildBitMap {
         }
         try {
             Orientation = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
-        } catch (Exception e) {
-            Orientation = "1";
-        }
+        } catch (Exception e) { }
         int orientation = Integer.parseInt(Orientation);
         if (orientation == 0)
             orientation = 1;
@@ -86,34 +81,19 @@ class BuildBitMap {
             height = bitmap.getHeight();
         }
 
-        landscape = width > height;
         /* crop center image only */
-        int sWidth;
-        int sHeight;
+        int sWidth = width * 14/16;
+        int sHeight = height * 14/16;
 
-        if (landscape) {
-            sHeight = height * 14 / 16;
-            sWidth = sHeight * 19 / 11;
-            if (sWidth > width) {
-                utils.logE("width",width+">" + sWidth+", "+height+">"+sHeight+", land=T, "+fullFileName);
-                sWidth = width * 5 / 8;
-            }
-        }
-        else {
-            sWidth = width * 7 / 9;
-            sHeight = sWidth * 8 / 6;
-            if (sHeight > height) {
-                utils.logE("height",width+">" + sWidth+", "+height+">"+sHeight+" land=F"+fullFileName);
-                sHeight = height * 5 / 8;
-            }
+        if (width < height) { // if portrait crop height a little more
+            sHeight = height * 13/16;
         }
 
         Bitmap sBitmap = Bitmap.createBitmap(bitmap, (width - sWidth)/2, (height - sHeight) /2, sWidth, sHeight);       // crop center
-        int outWidth = sizeX * 5 / 18;   // smaller scale
+        int outWidth = sizeX * 8 / 18;   // smaller scale
         int outHeight = outWidth * sHeight / sWidth;
-        sBitmap = Bitmap.createScaledBitmap(sBitmap, outWidth, outHeight, false);
         photo.setOrientation(orientation);
-        photo.setBitmap(sBitmap);
+        photo.setBitmap(Bitmap.createScaledBitmap(sBitmap, outWidth, outHeight, false));
         databaseIO.insert(photo);
         return photo;
     }
@@ -182,11 +162,13 @@ class BuildBitMap {
     private void markFoodPlaceAddress(int width, int height, Canvas canvas) {
 
         int xPos = width / 2;
-        int fontSize = (width>height) ? (height + width) / 70: (height + width) / 100;  // gps
-        int yPos = (width>height) ? height - fontSize: height - fontSize*4;
-        yPos = drawTextOnCanvas(canvas, sLatLng, fontSize, xPos, yPos);
-        fontSize = fontSize * 12 / 10;  // address
-        yPos -= fontSize + fontSize / 3;
+//        int fontSize = (width>height) ? (height + width) / 70: (height + width) / 100;  // gps
+//        int yPos = (width>height) ? height - fontSize: height - fontSize*4;
+//        yPos = drawTextOnCanvas(canvas, sLatLng, fontSize, xPos, yPos); // no more GPS string
+        int fontSize = (width>height) ? (height + width) / 60: (height + width) / 80;
+        int yPos = (width>height) ? height - fontSize*2: height - fontSize*5;
+//        fontSize = fontSize * 12 / 10;  // address
+//        yPos -= fontSize + fontSize / 3;
         yPos = drawTextOnCanvas(canvas, sAddress, fontSize, xPos, yPos);
         fontSize = fontSize * 12 / 10;  // Place
         yPos -= fontSize + fontSize / 3;

@@ -10,7 +10,6 @@ import static com.urrecliner.markupphoto.Vars.SUFFIX_JPG;
 import static com.urrecliner.markupphoto.Vars.buildBitMap;
 import static com.urrecliner.markupphoto.Vars.mActivity;
 import static com.urrecliner.markupphoto.Vars.mContext;
-import static com.urrecliner.markupphoto.Vars.nowLatLng;
 import static com.urrecliner.markupphoto.Vars.nowPlace;
 import static com.urrecliner.markupphoto.Vars.utils;
 
@@ -36,7 +35,7 @@ class MarkUpOnePhoto {
             matrix.postRotate(degree);
             bitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false);
         }
-        buildBitMap.init(nowLatLng, mActivity, mContext, orientation);
+        buildBitMap.init(mActivity, mContext, orientation);
         String sFood = " ", sPlace = " ", sAddress = " ";
         if (nowPlace != null) {
             String [] s = nowPlace.split("\n");

@@ -9,7 +9,6 @@ import static com.urrecliner.markupphoto.Vars.longFolder;
 import static com.urrecliner.markupphoto.Vars.mActivity;
 import static com.urrecliner.markupphoto.Vars.mContext;
 import static com.urrecliner.markupphoto.Vars.nowDownLoading;
-import static com.urrecliner.markupphoto.Vars.nowLatLng;
 import static com.urrecliner.markupphoto.Vars.nowPlace;
 import static com.urrecliner.markupphoto.Vars.nowPos;
 import static com.urrecliner.markupphoto.Vars.photoAdapter;
@@ -273,7 +272,7 @@ public class MarkupWithPlace extends AppCompatActivity {
         Geocoder geocoder = new Geocoder(this, Locale.KOREA);
         strPlace = "";
 //        nowLatLng = String.format(Locale.ENGLISH, "%.5f ; %.5f ; %.1f", latitude, longitude, altitude);
-        nowLatLng = LatLngConv.latLng2String(latitude, longitude, altitude);
+//        nowLatLng = LatLngConv.latLng2String(latitude, longitude, altitude);
         strAddress = GPS2Address.get(geocoder, latitude, longitude);
         EditText et = findViewById(R.id.placeAddress);
         String text = "\n"+strAddress;

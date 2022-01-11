@@ -41,7 +41,7 @@ public class Vars {
     static String shortFolder = null;
     static String longFolder = null;
     static int nowPos;
-    static String nowPlace, nowAddress, nowLatLng;
+    static String nowPlace, nowAddress;
     static int spanWidth, sizeX;
     static String copyPasteText = "";
     static String copyPasteGPS;
@@ -127,4 +127,3 @@ public class Vars {
             "all"};
 
 }
-
